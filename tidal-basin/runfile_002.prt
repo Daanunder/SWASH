@@ -1,0 +1,1494 @@
+1
+
+                    Execution started at 20210506.195744         
+
+
+
+                    ---------------------------------------
+                                     SWASH
+                         WAVE MOTION IN COASTAL WATERS     
+                             VERSION NUMBER  7.01               
+                    ---------------------------------------
+
+
+    
+ PROJECT  'Tidal basin' '002'
+    
+ !   '"
+    
+ !
+    
+ !   SET [level] [nor] [depmin] [maxmes] [maxerr] [seed]                        &
+    
+ !       [grav] [rhowat] [temp] [salinity] [dynvis] [rhoair] [rhosed]           &
+    
+ !       [cdcap] [prmean] [backvisc] [kappa]                                    &
+    
+ !       CORIolis  CARTesian|NAUTical  CC                                       &
+    
+ !       [printf]  [prtest]  [outlev]
+    
+ !
+    
+ !   MODE  DYNamic  / -> TWODimensional \  (SKIPMOMentum)
+    
+ !                  \    ONEDimensional /
+    
+ !
+    
+ MODE DYN ONED
+    
+ !
+    
+ !
+    
+ !   COORDinates  /  -> CARTesian
+    
+ !                \ SPHErical      CCM|QC
+    
+ !
+    
+ !          | REGular [xpc] [ypc] [alpc] [xlenc] [ylenc] [mxc] [myc]  |
+    
+ !   CGRID <  CURVilinear [mxc] [myc]  (EXC [xexc] [yexc])             >        &
+    
+ !          | UNSTRUCtured                                            |
+    
+ !
+    
+ ! ## Computational grid - lenghts must be floats, cell numbers must be integers!
+    
+ ! ## origing-x, origin-y, crs-rotation, xlenght, ylenght, x-cells, y-cells
+    
+ !
+    
+ CGRID 0. 0. 0. 10000 0. 100 0
+    
+ !
+    
+ !
+    
+ !          REPeating X|Y
+    
+ !
+    
+ !   VERTical [kmax] < [thickness] M|PERC >
+    
+ !
+    
+ ! ## Define input grid bottom
+    
+ ! ## origin (x,y,rotation) xm, ym, xlenght, ylenght
+    
+ INPGRID BOTTOM 0. 0. 0. 1 0 10000. 0.
+    
+ READGRID BOTTOM 1. 'flat.bot' 1 0 FREE
+    
+ !
+    
+ !   INPgrid  BOT|WLEV|CUR|VX|VY|FRic|WInd|WX|WY|PRessure|POROS|PSIZ|HSTRUC|    &
+    
+ !            NPLAnts|FLOAT|SALinity|TEMPerature|SEDiment                       &
+    
+ !
+    
+ !      | REG [xpinp] [ypinp] [alpinp]  [mxinp] [myinp]  [dxinp] [dyinp] |
+    
+ !      |                                                                |
+    
+ !     <  CURVilinear STAGgered                                           >     &
+    
+ !      |                                                                |
+    
+ !      | UNSTRUCtured                                                   |
+    
+ !
+    
+ !      (EXCeption  [excval])                                                   &
+    
+ !
+    
+ !      (NONSTATionary [tbeginp] [deltinp] SEC|MIN|HR|DAY [tendinp])            &
+    
+ !
+    
+ !      (NONUNIForm  [kmax])
+    
+ !
+    
+ !   READgrid UNSTRUCtured / -> TRIAngle \
+    
+ !                         \    EASYmesh / 'fname'
+    
+ !
+    
+ !   READinp   BOTtom|WLEVel|CURrent|FRic|WInd|PRessure|COOR|POROS|PSIZ|HSTRUC| &
+    
+ !             NPLAnts|FLOAT|SALinity|TEMPerature|SEDiment                      &
+    
+ !
+    
+ !                | 'fname1'        |
+    
+ !        [fac]  <  SERIes 'fname2'  >  [idla] [nhedf] ([nhedt]) (nhedvec])     &
+    
+ !                | LAYers 'fname3' |
+    
+ !
+    
+ !        FREE | FORMAT 'form' | [idfm] | UNFORMATTED
+    
+ !
+    
+ ! ## Define initial, boundary conditions
+    
+ INIT ZERO
+    
+ BOUND SIDE WEST BTYPE WLEV CON FOURIER 0. 1 0.0001454441043328608 90
+    
+ !
+    
+ !             | -> CONstant [wlev] [vx] [vy] [tke] [epsilon]
+    
+ !             |
+    
+ !   INITial  <     ZERO
+    
+ !             |
+    
+ !             |    STEAdy
+    
+ !
+    
+ !
+    
+ !                    |    PM              |
+    
+ !   BOUnd SHAPespec <  -> JONswap [gamma]  > SIG|RMS  PEAK|MEAN  DSPR POW|DEGR
+    
+ !                    |    TMA             |
+    
+ !
+    
+ !              / -> SIDE  N|NW|W|SW|S|SE|E|NE | [k]  CCW|CLOCKWise  \
+    
+ !   BOUndcond <                                                      >         &
+    
+ !              \    SEGment  / -> XY  < [x]  [y] >            \     /
+    
+ !                            \    IJ  < [i]  [j] > | < [k] >  /
+    
+ !
+    
+ !        BTYPe WLEV|VEL|DISCH|RIEMann|LRIEmann|WEAKrefl|SOMMerfeld|OUTFlow     &
+    
+ !
+    
+ !        LAYer [k] | HYPerbolic | LOGarithmic                                  &
+    
+ !
+    
+ !        SMOOthing [period] SEC|MIN|HR|DAY                                     &
+    
+ !
+    
+ !        ADDBoundwave                                                          &
+    
+ !
+    
+ !                   | FOURier  [azero] < [ampl] [omega] [phase] >
+    
+ !                   | REGular  [h] [per] [dir]
+    
+ !       | UNIForm  <  SPECTrum [h] [per] [dir] [dd] [cycle] SEC|MIN|HR|DAY
+    
+ !       |           | SERIes   'fname' [itmopt]
+    
+ !       |           | SPECFile 'fname' [cycle] SEC|MIN|HR|DAY
+    
+ !      <                                                                       &
+    
+ !       |           | FOURier  < [len] [azero] < [ampl] [omega] [phase] > >
+    
+ !       |           | REGular  < [len] [h] [per] [dir] >
+    
+ !       |           | SPECTrum < [len] [h] [per] [dir] [dd] [cycle] S|MI|HR|DA >
+    
+ !       | VARiable <  SERIes   < [len] 'fname' [itmopt] >
+    
+ !                   | SPECFile < [len] 'fname' [cycle] SEC|MIN|HR|DAY >
+    
+ !                   | SPECSwan 'fname' [cycle] SEC|MIN|HR|DAY
+    
+ !
+    
+ !
+    
+ !   SOURce   X|Y | [k]   [centre] [width] [depth] [delta]                      &
+    
+ !
+    
+ !             / REGular  [h] [per] [dir]                             \
+    
+ !             \ SPECTrum [h] [per] [dir] [dd] [cycle] SEC|MIN|HR|DAY /         &
+    
+ !
+    
+ !            SMOOthing [period] SEC|MIN|HR|DAY
+    
+ !
+    
+ !
+    
+ !   SPONgelayer LEft|RIght|LOwer|UPper [width] | < [k]  [width] >
+    
+ !
+    
+ !
+    
+ !   FLOAT  [alpha] [theta]
+    
+ !
+    
+ !
+    
+ !                     | -> CONstant [cd]                       |
+    
+ !                     |                                        |
+    
+ !                     |    CHARNock [beta] [height]            |
+    
+ !                     |                                        |
+    
+ !                     |    LINear [a1] [a2] [b] [wlow] [whigh] |
+    
+ !                     |                                        |
+    
+ !                     |    WU                                  |   | REL  [alpha]
+    
+ !   WIND [vel] [dir] <                                          > <
+    
+ !                     |    GARRatt                             |   | RELW [crest]
+    
+ !                     |                                        |
+    
+ !                     |    SMIthbanke                          |
+    
+ !                     |                                        |
+    
+ !                     |    CHEn                                |
+    
+ !                     |                                        |
+    
+ !                     |    FIT                                 |
+    
+ !
+    
+ !
+    
+ !              |    LINear [k]
+    
+ !              |
+    
+ !              |    CONstant [cf]
+    
+ !              |
+    
+ !              |    CHEZy [cf]
+    
+ !              |
+    
+ !   FRICtion  <  -> MANNing [cf]
+    
+ !              |
+    
+ !              |    COLEbrook [h]
+    
+ !              |
+    
+ !              |            | -> SMOOTH
+    
+ !              |    LOGlaw <
+    
+ !                           |    ROUGHness [h]
+    
+ !
+    
+ !
+    
+ !
+    
+ !                               | -> CONstant [visc]
+    
+ !                               |
+    
+ !              | -> Horizontal <     SMAGorinsky [cs]
+    
+ !              |                |
+    
+ !              |                |    MIXing [lm]
+    
+ !              |
+    
+ !              |
+    
+ !   VISCosity <     Vertical  KEPS [cfk] [cfe]
+    
+ !              |
+    
+ !              |
+    
+ !              |                | -> LINear
+    
+ !              |    FULL  KEPS <
+    
+ !              |                |    NONLinear
+    
+ !
+    
+ !
+    
+ !
+    
+ !   POROsity  [size] [height] [alpha0] [beta0] [wper]
+    
+ !
+    
+ !
+    
+ !   VEGEtation < [height] [diamtr] [nstems] [drag] > MASS [cm] POROsity Vertical
+    
+ !
+    
+ !
+    
+ !                          | -> Sec |    | -> NONCohesive [size]            |
+    
+ !   TRANSP [diff] [retur] <     MIn  >  <                                    > &
+    
+ !                          |    HR  |    | COHesive [tauce] [taucd] [erate] |
+    
+ !                          |    DAy |
+    
+ !
+    
+ !          [fall] [snum] [ak]  DENSity Y|N  [alfa] [crsn] [cp] [ek]            &
+    
+ !
+    
+ !          ANTICreep STAndard|SVK|None
+    
+ !
+    
+ !
+    
+ !   BREaking  [alpha] [beta] [nufac]
+    
+ !
+    
+ !
+    
+ !                    |    STAndard      |
+    
+ !                    |                  |
+    
+ !   NONHYDrostatic  <  -> BOX            > [theta]                             &
+    
+ !                    |                  |
+    
+ !                    |    DEPthaveraged |
+    
+ !
+    
+ !                   SUBGrid [pmax]  REDuced [qlay]                             &
+    
+ !
+    
+ !                   SOLVer [rhsaccur] [initaccur] [maxiter] [relax] [precfq]   &
+    
+ !
+    
+ !                   PREConditioner  ILUDS|ILUD|ILU|NONE                        &
+    
+ !
+    
+ !                   PROJection  ITERative [tol] [maxiter]
+    
+ !
+    
+ !
+    
+ !                   |         | UMOM  MOMentum|HEAD  / -> Horizontal   |
+    
+ !                   |         |                      \    Vertical     |
+    
+ !                   | UPWind <                                         |
+    
+ !                   |         | WMOM  / -> Horizontal                  |
+    
+ !                   |         |       \    Vertical                    |
+    
+ !                   |                                                  |
+    
+ !   DISCRETization <  CORRdep                                           >      &
+    
+ !                   |                                                  |
+    
+ !                   | TRANSPort  / -> Horizontal                       |
+    
+ !                   |            \    Vertical                         |
+    
+ !                   |                                                  |
+    
+ !                   | MIMEtic                                          |
+    
+ !
+    
+ !
+    
+ !                      | NONe                                 |
+    
+ !                      |                                      |
+    
+ !                      | FIRstorder                           |
+    
+ !                      |                                      |
+    
+ !                      | HIGherorder [kappa]                  |
+    
+ !                      |                                      |
+    
+ !                      |          | -> SWEBy [phi]            |
+    
+ !                      |          |                           |
+    
+ !                      | LIMiter <  RKAPpa [kappa]            |
+    
+ !                      |          |                           |
+    
+ !                      |          | PLKAPpa [kappa] [mbound]  |
+    
+ !                      | FROmm                                |
+    
+ !                      |                                      |
+    
+ !                      | -> BDF | LUDs                        |
+    
+ !                      |                                      |
+    
+ !                     <  QUIck                                 >
+    
+ !                      |                                      |
+    
+ !                      | CUI                                  |
+    
+ !                      |                                      |
+    
+ !                      | MINMod                               |
+    
+ !                      |                                      |
+    
+ !                      | SUPerbee                             |
+    
+ !                      |                                      |
+    
+ !                      | VANLeer                              |
+    
+ !                      |                                      |
+    
+ !                      | MUScl                                |
+    
+ !                      |                                      |
+    
+ !                      | KORen                                |
+    
+ !                      |                                      |
+    
+ !                      | SMArt                                |
+    
+ !
+    
+ !
+    
+ !   DPSopt  MIN|MEAN|MAX|SHIFt
+    
+ !
+    
+ ! # Specify numerical method
+    
+ TIMEI METH IMPLICIT
+    
+ !               | -> EXPL [cfllow] [cflhig]                        |
+    
+ !               |                                                  |
+    
+ !   TIMEI METH <     IMPL [thetac] [thetas] &                       >          &
+    
+ !               |                                                  |
+    
+ !               |         SOLVer [tol] [maxiter] [weight]  NEWTon  |
+    
+ !
+    
+ !         VERTical [thetau] [thetaw] [thetat]
+    
+ !
+    
+ ! ## Specify output
+    
+ !POINTS 'buoys' 10000. 0.
+    
+ FRAME 'buoys' 0. 0. 0. 10000. 0. 5 0
+    
+ TABLE 'buoys' HEAD 'output_buoy_002.tbl' TSEC WATL OUT  20210420.000000  5 MIN
+    
+ !
+    
+ !   FRAME   'sname'  [xpfr] [ypfr] [alpfr] [xlenfr] [ylenfr] [mxfr] [myfr]
+    
+ !
+    
+ !   GROUP   'sname'  SUBGRID [ix1] [ix2] [iy1] [iy2]
+    
+ !
+    
+ !   CURVE   'sname'  [xp1] [yp1]   < [int]  [xp]  [yp] >
+    
+ !
+    
+ !   RAY     'rname'  [xp1] [yp1] [xq1] [yq1]                                   &
+    
+ !                    <  [int]  [xp]  [yp]  [xq]  [yq]  >
+    
+ !
+    
+ !   ISOLINE 'sname'  'rname'  DEPTH|BOTTOM  [dep]
+    
+ !
+    
+ !   POINTS  'sname'  < [xp]  [yp]  >     |    FILE 'fname'
+    
+ !
+    
+ !
+    
+ !              |...|
+    
+ !   QUANTity  <     >   'short'  'long'  [lexp]  [hexp]  [excv]  [ref]         &
+    
+ !              |...|
+    
+ !
+    
+ !                                        [dur] SEC|MIN|HR|DAY [depth] [delrp]  &
+    
+ !
+    
+ !                                        [xcom] [ycom] [zcom] [alpobj]         &
+    
+ !
+    
+ !             / -> PROBLEMcoord \
+    
+ !             \ FRAME           /
+    
+ !
+    
+ !   OUTPut OPTions  'comment'  (TABle [field])  (BLOck  [ndec]  [len])
+    
+ !
+    
+ !   BLOCK   'sname'  HEAD | NOHEAD  'fname' (LAY-OUT [idla])                   &
+    
+ !           < TSEC|XP|YP|DEP|BOTL|WATL|DRAF|VMAG|VDIR|VEL|VKSI|VETA|           &
+    
+ !             PRESS|NHPRES|QMAG|QDIR|DISCH|QKSI|QETA|VORT|WMAG|WDIR|WIND|      &
+    
+ !             FRC|USTAR|UFRIC|HRUN|BRKP|ZK|HK|VMAGK|VDIRK|VELK|VKSIK|          &
+    
+ !             VETAK|VZ|VOMEGA|QMAGK|QDIRK|DISCHK|QKSIK|QETAK|PRESSK|           &
+    
+ !             NHPRSK|TKE|EPS|VISC|HS|HRMS|SETUP|MVMAG|MVDIR|MVEL|MVKSI|        &
+    
+ !             MVETA|MVMAGK|MVDIRK|MVELK|MVKSIK|MVETAK|MTKE|MEPS|MVISC|         &
+    
+ !             SAL|TEMP|SED|MSAL|MTEMP|MSED|SALK|TEMPK|SEDK|MSALK|MTEMPK|       &
+    
+ !             MSEDK [unit] >                                                   &
+    
+ !           (OUTPUT [tbegblk] [deltblk] SEC|MIN|HR|DAY)
+    
+ !
+    
+ !   TABLE   'sname'  HEAD | NOHEAD | STAB | SWASH | IND  'fname'               &
+    
+ !           < TIME|TSEC|XP|YP|DIST|DEP|BOTL|WATL|DRAF|VMAG|VDIR|VEL|VKSI|VETA| &
+    
+ !             PRESS|NHPRES|QMAG|QDIR|DISCH|QKSI|QETA|VORT|WMAG|WDIR|WIND|FRC|  &
+    
+ !             USTAR|UFRIC|HRUN|BRKP|ZK|HK|VMAGK|VDIRK|VELK|VKSIK|VETAK|VZ|     &
+    
+ !             VOMEGA|QMAGK|QDIRK|DISCHK|QKSIK|QETAK|PRESSK|NHPRSK|TKE|EPS|     &
+    
+ !             VISC|HS|HRMS|SETUP|MVMAG|MVDIR|MVEL|MVKSI|MVETA|MVMAGK|MVDIRK|   &
+    
+ !             MVELK|MVKSIK|MVETAK|MTKE|MEPS|MVISC|SAL|TEMP|SED|MSAL|MTEMP|     &
+    
+ !             MSED|SALK|TEMPK|SEDK|MSALK|MTEMPK|MSEDK|FORCEX|FORCEY|FORCEZ|    &
+    
+ !             MOMX|MOMY|MOMZ|RUNUP >                                           &
+    
+ !           (OUTPUT [tbegtbl] [delttbl] SEC|MIN|HR|DAY)
+    
+ !
+    
+ !
+    
+ !
+    
+ !                                 / -> IJ < [i] [j] > | < [k] > \
+    
+ !   TEST [itest] [itrace] POINTS <                               > 'fname'
+    
+ !                                 \    XY < [x] [y] >           /
+    
+ !
+    
+ ! ## Start computation
+    
+ COMPUTE 20210420.000000 10 MIN 20210425.000000
+
+----------------------------------------------------------------
+                  COMPUTATIONAL PART OF SWASH
+----------------------------------------------------------------
+
+ One-dimensional mode of SWASH is activated
+ Depth-averaged mode of SWASH is activated
+ The Cartesian convention for velocity direction is used
+ Cartesian coordinate system is used
+ Computational grid is rectilinear
+ Gridresolution       : MXC             102 MYC              2
+                      : MCGRD           103
+ Mesh sizes           : DX       0.1000E+03 DY      0.0000E+00
+                      : NSTATC            1 MTC            720
+ Drying/flooding      : DEPMIN   0.5000E-04 DPSOPT           2
+ Physical constants   : GRAV     0.9813E+01 RHOW    0.1023E+04
+                      : RHOA     0.1205E+01 DYNVIS  0.1000E-02
+ Wind input           : WSPEED   0.0000E+00 DIR     0.0000E+00
+ Wind stress is off
+ Bottom friction is off
+ Vegetation is off
+ No wave breaking control
+ Baroclinic forcing is off
+ No transport of constituent
+ Horizontal viscosity is off
+ Vertical viscosity is off
+ Porosity is off
+ Semi-implicit method : THETAC   0.5100E+00 THETAS  0.5100E+00
+ Horz advection u-mom : PROPSC            3 KAPPA  -0.1000E+01
+                      : M        0.0000E+00 PHI     0.0000E+00
+ Correction water dep : PROPSC            6 KAPPA   0.0000E+00
+                      : M        0.2000E+01 PHI     0.0000E+00
+ Sponge layer widths  : LEFT     0.0000E+00 RIGHT   0.0000E+00
+                      : LOWER    0.0000E+00 UPPER   0.0000E+00
+ Reference date and time         ****01**.******
+ Time of simulation  ->  20210420.001000      in sec:        600.00500
+ Time of simulation  ->  20210420.002000      in sec:       1200.00500
+ ** Warning          : CFL condition is violated!
+ ** Message          : It is advised to reduce the time step!
+ Time of simulation  ->  20210420.003000      in sec:       1800.00500
+ ** Warning          : CFL condition is violated!
+ ** Message          : It is advised to reduce the time step!
+ Time of simulation  ->  20210420.004000      in sec:       2400.00500
+ ** Warning          : CFL condition is violated!
+ ** Message          : It is advised to reduce the time step!
+ Time of simulation  ->  20210420.005000      in sec:       3000.00500
+ ** Warning          : CFL condition is violated!
+ ** Message          : It is advised to reduce the time step!
+ Time of simulation  ->  20210420.010000      in sec:       3600.00500
+ Time of simulation  ->  20210420.011000      in sec:       4200.00500
+ Time of simulation  ->  20210420.012000      in sec:       4800.00500
+ Time of simulation  ->  20210420.013000      in sec:       5400.00500
+ Time of simulation  ->  20210420.014000      in sec:       6000.00500
+ ** Warning          : CFL condition is violated!
+ ** Message          : It is advised to reduce the time step!
+ Time of simulation  ->  20210420.015000      in sec:       6600.00500
+ ** Warning          : CFL condition is violated!
+ ** Message          : It is advised to reduce the time step!
+ Time of simulation  ->  20210420.020000      in sec:       7200.00500
+ Time of simulation  ->  20210420.021000      in sec:       7800.00500
+ Time of simulation  ->  20210420.022000      in sec:       8400.00500
+ Time of simulation  ->  20210420.023000      in sec:       9000.00500
+ Time of simulation  ->  20210420.024000      in sec:       9600.00500
+ Time of simulation  ->  20210420.025000      in sec:      10200.00500
+ Time of simulation  ->  20210420.030000      in sec:      10800.00500
+ Time of simulation  ->  20210420.031000      in sec:      11400.00500
+ Time of simulation  ->  20210420.032000      in sec:      12000.00500
+ Time of simulation  ->  20210420.033000      in sec:      12600.00500
+ Time of simulation  ->  20210420.034000      in sec:      13200.00500
+ Time of simulation  ->  20210420.035000      in sec:      13800.00500
+ Time of simulation  ->  20210420.040000      in sec:      14400.00500
+ Time of simulation  ->  20210420.041000      in sec:      15000.00500
+ Time of simulation  ->  20210420.042000      in sec:      15600.00500
+ Time of simulation  ->  20210420.043000      in sec:      16200.00500
+ Time of simulation  ->  20210420.044000      in sec:      16800.00500
+ ** Warning          : CFL condition is violated!
+ ** Message          : It is advised to reduce the time step!
+ Time of simulation  ->  20210420.045000      in sec:      17400.00500
+ ** Warning          : CFL condition is violated!
+ ** Message          : It is advised to reduce the time step!
+ Time of simulation  ->  20210420.050000      in sec:      18000.00500
+ Time of simulation  ->  20210420.051000      in sec:      18600.00500
+ Time of simulation  ->  20210420.052000      in sec:      19200.00500
+ Time of simulation  ->  20210420.053000      in sec:      19800.00500
+ Time of simulation  ->  20210420.054000      in sec:      20400.00500
+ ** Warning          : CFL condition is violated!
+ ** Message          : It is advised to reduce the time step!
+ Time of simulation  ->  20210420.055000      in sec:      21000.00500
+ ** Warning          : CFL condition is violated!
+ ** Message          : It is advised to reduce the time step!
+ Time of simulation  ->  20210420.060000      in sec:      21600.00500
+ ** Warning          : CFL condition is violated!
+ ** Message          : It is advised to reduce the time step!
+ Time of simulation  ->  20210420.061000      in sec:      22200.00500
+ Time of simulation  ->  20210420.062000      in sec:      22800.00500
+ Time of simulation  ->  20210420.063000      in sec:      23400.00500
+ Time of simulation  ->  20210420.064000      in sec:      24000.00500
+ Time of simulation  ->  20210420.065000      in sec:      24600.00500
+ ** Warning          : CFL condition is violated!
+ ** Message          : It is advised to reduce the time step!
+ Time of simulation  ->  20210420.070000      in sec:      25200.00500
+ ** Warning          : CFL condition is violated!
+ ** Message          : It is advised to reduce the time step!
+ Time of simulation  ->  20210420.071000      in sec:      25800.00500
+ ** Warning          : CFL condition is violated!
+ ** Message          : It is advised to reduce the time step!
+ Time of simulation  ->  20210420.072000      in sec:      26400.00500
+ Time of simulation  ->  20210420.073000      in sec:      27000.00500
+ Time of simulation  ->  20210420.074000      in sec:      27600.00500
+ Time of simulation  ->  20210420.075000      in sec:      28200.00500
+ Time of simulation  ->  20210420.080000      in sec:      28800.00500
+ Time of simulation  ->  20210420.081000      in sec:      29400.00500
+ Time of simulation  ->  20210420.082000      in sec:      30000.00500
+ Time of simulation  ->  20210420.083000      in sec:      30600.00500
+ Time of simulation  ->  20210420.084000      in sec:      31200.00500
+ Time of simulation  ->  20210420.085000      in sec:      31800.00500
+ Time of simulation  ->  20210420.090000      in sec:      32400.00500
+ Time of simulation  ->  20210420.091000      in sec:      33000.00500
+ Time of simulation  ->  20210420.092000      in sec:      33600.00500
+ Time of simulation  ->  20210420.093000      in sec:      34200.00500
+ Time of simulation  ->  20210420.094000      in sec:      34800.00500
+ Time of simulation  ->  20210420.095000      in sec:      35400.00500
+ Time of simulation  ->  20210420.100000      in sec:      36000.00500
+ Time of simulation  ->  20210420.101000      in sec:      36600.00500
+ ** Warning          : CFL condition is violated!
+ ** Message          : It is advised to reduce the time step!
+ Time of simulation  ->  20210420.102000      in sec:      37200.00500
+ Time of simulation  ->  20210420.103000      in sec:      37800.00500
+ Time of simulation  ->  20210420.104000      in sec:      38400.00500
+ Time of simulation  ->  20210420.105000      in sec:      39000.00500
+ Time of simulation  ->  20210420.110000      in sec:      39600.00500
+ Time of simulation  ->  20210420.111000      in sec:      40200.00500
+ Time of simulation  ->  20210420.112000      in sec:      40800.00500
+ ** Warning          : CFL condition is violated!
+ ** Message          : It is advised to reduce the time step!
+ Time of simulation  ->  20210420.113000      in sec:      41400.00500
+ ** Warning          : CFL condition is violated!
+ ** Message          : It is advised to reduce the time step!
+ Time of simulation  ->  20210420.114000      in sec:      42000.00500
+ ** Warning          : CFL condition is violated!
+ ** Message          : It is advised to reduce the time step!
+ Time of simulation  ->  20210420.115000      in sec:      42600.00500
+ Time of simulation  ->  20210420.120000      in sec:      43200.00500
+ Time of simulation  ->  20210420.121000      in sec:      43800.00500
+ Time of simulation  ->  20210420.122000      in sec:      44400.00500
+ Time of simulation  ->  20210420.123000      in sec:      45000.00500
+ ** Warning          : CFL condition is violated!
+ ** Message          : It is advised to reduce the time step!
+ Time of simulation  ->  20210420.124000      in sec:      45600.00500
+ ** Warning          : CFL condition is violated!
+ ** Message          : It is advised to reduce the time step!
+ Time of simulation  ->  20210420.125000      in sec:      46200.00500
+ Time of simulation  ->  20210420.130000      in sec:      46800.00500
+ Time of simulation  ->  20210420.131000      in sec:      47400.00500
+ Time of simulation  ->  20210420.132000      in sec:      48000.00500
+ Time of simulation  ->  20210420.133000      in sec:      48600.00500
+ Time of simulation  ->  20210420.134000      in sec:      49200.00500
+ Time of simulation  ->  20210420.135000      in sec:      49800.00500
+ Time of simulation  ->  20210420.140000      in sec:      50400.00500
+ Time of simulation  ->  20210420.141000      in sec:      51000.00500
+ Time of simulation  ->  20210420.142000      in sec:      51600.00500
+ Time of simulation  ->  20210420.143000      in sec:      52200.00500
+ Time of simulation  ->  20210420.144000      in sec:      52800.00500
+ Time of simulation  ->  20210420.145000      in sec:      53400.00500
+ Time of simulation  ->  20210420.150000      in sec:      54000.00500
+ Time of simulation  ->  20210420.151000      in sec:      54600.00500
+ Time of simulation  ->  20210420.152000      in sec:      55200.00500
+ Time of simulation  ->  20210420.153000      in sec:      55800.00500
+ Time of simulation  ->  20210420.154000      in sec:      56400.00500
+ Time of simulation  ->  20210420.155000      in sec:      57000.00500
+ Time of simulation  ->  20210420.160000      in sec:      57600.00500
+ Time of simulation  ->  20210420.161000      in sec:      58200.00500
+ Time of simulation  ->  20210420.162000      in sec:      58800.00500
+ Time of simulation  ->  20210420.163000      in sec:      59400.00500
+ Time of simulation  ->  20210420.164000      in sec:      60000.00500
+ Time of simulation  ->  20210420.165000      in sec:      60600.00500
+ Time of simulation  ->  20210420.170000      in sec:      61200.00500
+ Time of simulation  ->  20210420.171000      in sec:      61800.00500
+ Time of simulation  ->  20210420.172000      in sec:      62400.00500
+ Time of simulation  ->  20210420.173000      in sec:      63000.00500
+ Time of simulation  ->  20210420.174000      in sec:      63600.00500
+ Time of simulation  ->  20210420.175000      in sec:      64200.00500
+ ** Warning          : CFL condition is violated!
+ ** Message          : It is advised to reduce the time step!
+ Time of simulation  ->  20210420.180000      in sec:      64800.00500
+ ** Warning          : CFL condition is violated!
+ ** Message          : It is advised to reduce the time step!
+ Time of simulation  ->  20210420.181000      in sec:      65400.00500
+ Time of simulation  ->  20210420.182000      in sec:      66000.00500
+ Time of simulation  ->  20210420.183000      in sec:      66600.00500
+ Time of simulation  ->  20210420.184000      in sec:      67200.00500
+ Time of simulation  ->  20210420.185000      in sec:      67800.00500
+ Time of simulation  ->  20210420.190000      in sec:      68400.00500
+ ** Warning          : CFL condition is violated!
+ ** Message          : It is advised to reduce the time step!
+ Time of simulation  ->  20210420.191000      in sec:      69000.00500
+ ** Warning          : CFL condition is violated!
+ ** Message          : It is advised to reduce the time step!
+ Time of simulation  ->  20210420.192000      in sec:      69600.00500
+ Time of simulation  ->  20210420.193000      in sec:      70200.00500
+ Time of simulation  ->  20210420.194000      in sec:      70800.00500
+ Time of simulation  ->  20210420.195000      in sec:      71400.00500
+ Time of simulation  ->  20210420.200000      in sec:      72000.00500
+ Time of simulation  ->  20210420.201000      in sec:      72600.00500
+ Time of simulation  ->  20210420.202000      in sec:      73200.00500
+ Time of simulation  ->  20210420.203000      in sec:      73800.00500
+ Time of simulation  ->  20210420.204000      in sec:      74400.00500
+ Time of simulation  ->  20210420.205000      in sec:      75000.00500
+ Time of simulation  ->  20210420.210000      in sec:      75600.00500
+ Time of simulation  ->  20210420.211000      in sec:      76200.00500
+ Time of simulation  ->  20210420.212000      in sec:      76800.00500
+ Time of simulation  ->  20210420.213000      in sec:      77400.00500
+ Time of simulation  ->  20210420.214000      in sec:      78000.00500
+ Time of simulation  ->  20210420.215000      in sec:      78600.00500
+ Time of simulation  ->  20210420.220000      in sec:      79200.00500
+ Time of simulation  ->  20210420.221000      in sec:      79800.00500
+ Time of simulation  ->  20210420.222000      in sec:      80400.00500
+ Time of simulation  ->  20210420.223000      in sec:      81000.00500
+ Time of simulation  ->  20210420.224000      in sec:      81600.00500
+ Time of simulation  ->  20210420.225000      in sec:      82200.00500
+ Time of simulation  ->  20210420.230000      in sec:      82800.00500
+ Time of simulation  ->  20210420.231000      in sec:      83400.00500
+ Time of simulation  ->  20210420.232000      in sec:      84000.00500
+ ** Warning          : CFL condition is violated!
+ ** Message          : It is advised to reduce the time step!
+ Time of simulation  ->  20210420.233000      in sec:      84600.00500
+ ** Warning          : CFL condition is violated!
+ ** Message          : It is advised to reduce the time step!
+ Time of simulation  ->  20210420.234000      in sec:      85200.00500
+ ** Warning          : CFL condition is violated!
+ ** Message          : It is advised to reduce the time step!
+ Time of simulation  ->  20210420.235000      in sec:      85800.00500
+ Time of simulation  ->  20210421.000000      in sec:      86400.00500
+ Time of simulation  ->  20210421.001000      in sec:      87000.00500
+ Time of simulation  ->  20210421.002000      in sec:      87600.00500
+ Time of simulation  ->  20210421.003000      in sec:      88200.00500
+ Time of simulation  ->  20210421.004000      in sec:      88800.00500
+ ** Warning          : CFL condition is violated!
+ ** Message          : It is advised to reduce the time step!
+ Time of simulation  ->  20210421.005000      in sec:      89400.00500
+ Time of simulation  ->  20210421.010000      in sec:      90000.00500
+ Time of simulation  ->  20210421.011000      in sec:      90600.00500
+ Time of simulation  ->  20210421.012000      in sec:      91200.00500
+ Time of simulation  ->  20210421.013000      in sec:      91800.00500
+ Time of simulation  ->  20210421.014000      in sec:      92400.00500
+ Time of simulation  ->  20210421.015000      in sec:      93000.00500
+ Time of simulation  ->  20210421.020000      in sec:      93600.00500
+ Time of simulation  ->  20210421.021000      in sec:      94200.00500
+ Time of simulation  ->  20210421.022000      in sec:      94800.00500
+ Time of simulation  ->  20210421.023000      in sec:      95400.00500
+ Time of simulation  ->  20210421.024000      in sec:      96000.00500
+ Time of simulation  ->  20210421.025000      in sec:      96600.00500
+ Time of simulation  ->  20210421.030000      in sec:      97200.00500
+ Time of simulation  ->  20210421.031000      in sec:      97800.00500
+ Time of simulation  ->  20210421.032000      in sec:      98400.00500
+ Time of simulation  ->  20210421.033000      in sec:      99000.00500
+ Time of simulation  ->  20210421.034000      in sec:      99600.00500
+ Time of simulation  ->  20210421.035000      in sec:     100200.00500
+ Time of simulation  ->  20210421.040000      in sec:     100800.00500
+ Time of simulation  ->  20210421.041000      in sec:     101400.00500
+ Time of simulation  ->  20210421.042000      in sec:     102000.00500
+ Time of simulation  ->  20210421.043000      in sec:     102600.00500
+ Time of simulation  ->  20210421.044000      in sec:     103200.00500
+ Time of simulation  ->  20210421.045000      in sec:     103800.00500
+ Time of simulation  ->  20210421.050000      in sec:     104400.00500
+ Time of simulation  ->  20210421.051000      in sec:     105000.00500
+ Time of simulation  ->  20210421.052000      in sec:     105600.00500
+ Time of simulation  ->  20210421.053000      in sec:     106200.00500
+ Time of simulation  ->  20210421.054000      in sec:     106800.00500
+ Time of simulation  ->  20210421.055000      in sec:     107400.00500
+ ** Warning          : CFL condition is violated!
+ ** Message          : It is advised to reduce the time step!
+ Time of simulation  ->  20210421.060000      in sec:     108000.00500
+ ** Warning          : CFL condition is violated!
+ ** Message          : It is advised to reduce the time step!
+ Time of simulation  ->  20210421.061000      in sec:     108600.00500
+ Time of simulation  ->  20210421.062000      in sec:     109200.00500
+ Time of simulation  ->  20210421.063000      in sec:     109800.00500
+ Time of simulation  ->  20210421.064000      in sec:     110400.00500
+ Time of simulation  ->  20210421.065000      in sec:     111000.00500
+ Time of simulation  ->  20210421.070000      in sec:     111600.00500
+ Time of simulation  ->  20210421.071000      in sec:     112200.00500
+ Time of simulation  ->  20210421.072000      in sec:     112800.00500
+ Time of simulation  ->  20210421.073000      in sec:     113400.00500
+ Time of simulation  ->  20210421.074000      in sec:     114000.00500
+ Time of simulation  ->  20210421.075000      in sec:     114600.00500
+ Time of simulation  ->  20210421.080000      in sec:     115200.00500
+ Time of simulation  ->  20210421.081000      in sec:     115800.00500
+ Time of simulation  ->  20210421.082000      in sec:     116400.00500
+ Time of simulation  ->  20210421.083000      in sec:     117000.00500
+ Time of simulation  ->  20210421.084000      in sec:     117600.00500
+ Time of simulation  ->  20210421.085000      in sec:     118200.00500
+ Time of simulation  ->  20210421.090000      in sec:     118800.00500
+ Time of simulation  ->  20210421.091000      in sec:     119400.00500
+ Time of simulation  ->  20210421.092000      in sec:     120000.00500
+ Time of simulation  ->  20210421.093000      in sec:     120600.00500
+ Time of simulation  ->  20210421.094000      in sec:     121200.00500
+ Time of simulation  ->  20210421.095000      in sec:     121800.00500
+ Time of simulation  ->  20210421.100000      in sec:     122400.00500
+ Time of simulation  ->  20210421.101000      in sec:     123000.00500
+ Time of simulation  ->  20210421.102000      in sec:     123600.00500
+ Time of simulation  ->  20210421.103000      in sec:     124200.00500
+ Time of simulation  ->  20210421.104000      in sec:     124800.00500
+ Time of simulation  ->  20210421.105000      in sec:     125400.00500
+ Time of simulation  ->  20210421.110000      in sec:     126000.00500
+ Time of simulation  ->  20210421.111000      in sec:     126600.00500
+ Time of simulation  ->  20210421.112000      in sec:     127200.00500
+ Time of simulation  ->  20210421.113000      in sec:     127800.00500
+ ** Warning          : CFL condition is violated!
+ ** Message          : It is advised to reduce the time step!
+ Time of simulation  ->  20210421.114000      in sec:     128400.00500
+ ** Warning          : CFL condition is violated!
+ ** Message          : It is advised to reduce the time step!
+ Time of simulation  ->  20210421.115000      in sec:     129000.00500
+ Time of simulation  ->  20210421.120000      in sec:     129600.00500
+ Time of simulation  ->  20210421.121000      in sec:     130200.00500
+ Time of simulation  ->  20210421.122000      in sec:     130800.00500
+ Time of simulation  ->  20210421.123000      in sec:     131400.00500
+ Time of simulation  ->  20210421.124000      in sec:     132000.00500
+ Time of simulation  ->  20210421.125000      in sec:     132600.00500
+ Time of simulation  ->  20210421.130000      in sec:     133200.00500
+ Time of simulation  ->  20210421.131000      in sec:     133800.00500
+ Time of simulation  ->  20210421.132000      in sec:     134400.00500
+ Time of simulation  ->  20210421.133000      in sec:     135000.00500
+ Time of simulation  ->  20210421.134000      in sec:     135600.00500
+ Time of simulation  ->  20210421.135000      in sec:     136200.00500
+ Time of simulation  ->  20210421.140000      in sec:     136800.00500
+ Time of simulation  ->  20210421.141000      in sec:     137400.00500
+ Time of simulation  ->  20210421.142000      in sec:     138000.00500
+ Time of simulation  ->  20210421.143000      in sec:     138600.00500
+ Time of simulation  ->  20210421.144000      in sec:     139200.00500
+ Time of simulation  ->  20210421.145000      in sec:     139800.00500
+ Time of simulation  ->  20210421.150000      in sec:     140400.00500
+ Time of simulation  ->  20210421.151000      in sec:     141000.00500
+ Time of simulation  ->  20210421.152000      in sec:     141600.00500
+ Time of simulation  ->  20210421.153000      in sec:     142200.00500
+ Time of simulation  ->  20210421.154000      in sec:     142800.00500
+ Time of simulation  ->  20210421.155000      in sec:     143400.00500
+ Time of simulation  ->  20210421.160000      in sec:     144000.00500
+ Time of simulation  ->  20210421.161000      in sec:     144600.00500
+ Time of simulation  ->  20210421.162000      in sec:     145200.00500
+ Time of simulation  ->  20210421.163000      in sec:     145800.00500
+ Time of simulation  ->  20210421.164000      in sec:     146400.00500
+ Time of simulation  ->  20210421.165000      in sec:     147000.00500
+ Time of simulation  ->  20210421.170000      in sec:     147600.00500
+ Time of simulation  ->  20210421.171000      in sec:     148200.00500
+ Time of simulation  ->  20210421.172000      in sec:     148800.00500
+ Time of simulation  ->  20210421.173000      in sec:     149400.00500
+ Time of simulation  ->  20210421.174000      in sec:     150000.00500
+ Time of simulation  ->  20210421.175000      in sec:     150600.00500
+ Time of simulation  ->  20210421.180000      in sec:     151200.00500
+ ** Warning          : CFL condition is violated!
+ ** Message          : It is advised to reduce the time step!
+ Time of simulation  ->  20210421.181000      in sec:     151800.00500
+ Time of simulation  ->  20210421.182000      in sec:     152400.00500
+ Time of simulation  ->  20210421.183000      in sec:     153000.00500
+ Time of simulation  ->  20210421.184000      in sec:     153600.00500
+ Time of simulation  ->  20210421.185000      in sec:     154200.00500
+ Time of simulation  ->  20210421.190000      in sec:     154800.00500
+ Time of simulation  ->  20210421.191000      in sec:     155400.00500
+ Time of simulation  ->  20210421.192000      in sec:     156000.00500
+ Time of simulation  ->  20210421.193000      in sec:     156600.00500
+ Time of simulation  ->  20210421.194000      in sec:     157200.00500
+ Time of simulation  ->  20210421.195000      in sec:     157800.00500
+ Time of simulation  ->  20210421.200000      in sec:     158400.00500
+ Time of simulation  ->  20210421.201000      in sec:     159000.00500
+ Time of simulation  ->  20210421.202000      in sec:     159600.00500
+ Time of simulation  ->  20210421.203000      in sec:     160200.00500
+ Time of simulation  ->  20210421.204000      in sec:     160800.00500
+ Time of simulation  ->  20210421.205000      in sec:     161400.00500
+ Time of simulation  ->  20210421.210000      in sec:     162000.00500
+ Time of simulation  ->  20210421.211000      in sec:     162600.00500
+ Time of simulation  ->  20210421.212000      in sec:     163200.00500
+ Time of simulation  ->  20210421.213000      in sec:     163800.00500
+ Time of simulation  ->  20210421.214000      in sec:     164400.00500
+ Time of simulation  ->  20210421.215000      in sec:     165000.00500
+ Time of simulation  ->  20210421.220000      in sec:     165600.00500
+ Time of simulation  ->  20210421.221000      in sec:     166200.00500
+ Time of simulation  ->  20210421.222000      in sec:     166800.00500
+ Time of simulation  ->  20210421.223000      in sec:     167400.00500
+ Time of simulation  ->  20210421.224000      in sec:     168000.00500
+ Time of simulation  ->  20210421.225000      in sec:     168600.00500
+ Time of simulation  ->  20210421.230000      in sec:     169200.00500
+ Time of simulation  ->  20210421.231000      in sec:     169800.00500
+ Time of simulation  ->  20210421.232000      in sec:     170400.00500
+ Time of simulation  ->  20210421.233000      in sec:     171000.00500
+ Time of simulation  ->  20210421.234000      in sec:     171600.00500
+ Time of simulation  ->  20210421.235000      in sec:     172200.00500
+ Time of simulation  ->  20210422.000000      in sec:     172800.00500
+ Time of simulation  ->  20210422.001000      in sec:     173400.00500
+ Time of simulation  ->  20210422.002000      in sec:     174000.00500
+ Time of simulation  ->  20210422.003000      in sec:     174600.00500
+ Time of simulation  ->  20210422.004000      in sec:     175200.00500
+ Time of simulation  ->  20210422.005000      in sec:     175800.00500
+ Time of simulation  ->  20210422.010000      in sec:     176400.00500
+ Time of simulation  ->  20210422.011000      in sec:     177000.00500
+ Time of simulation  ->  20210422.012000      in sec:     177600.00500
+ Time of simulation  ->  20210422.013000      in sec:     178200.00500
+ Time of simulation  ->  20210422.014000      in sec:     178800.00500
+ Time of simulation  ->  20210422.015000      in sec:     179400.00500
+ Time of simulation  ->  20210422.020000      in sec:     180000.00500
+ Time of simulation  ->  20210422.021000      in sec:     180600.00500
+ Time of simulation  ->  20210422.022000      in sec:     181200.00500
+ Time of simulation  ->  20210422.023000      in sec:     181800.00500
+ Time of simulation  ->  20210422.024000      in sec:     182400.00500
+ Time of simulation  ->  20210422.025000      in sec:     183000.00500
+ Time of simulation  ->  20210422.030000      in sec:     183600.00500
+ Time of simulation  ->  20210422.031000      in sec:     184200.00500
+ Time of simulation  ->  20210422.032000      in sec:     184800.00500
+ Time of simulation  ->  20210422.033000      in sec:     185400.00500
+ Time of simulation  ->  20210422.034000      in sec:     186000.00500
+ Time of simulation  ->  20210422.035000      in sec:     186600.00500
+ Time of simulation  ->  20210422.040000      in sec:     187200.00500
+ Time of simulation  ->  20210422.041000      in sec:     187800.00500
+ Time of simulation  ->  20210422.042000      in sec:     188400.00500
+ Time of simulation  ->  20210422.043000      in sec:     189000.00500
+ Time of simulation  ->  20210422.044000      in sec:     189600.00500
+ Time of simulation  ->  20210422.045000      in sec:     190200.00500
+ Time of simulation  ->  20210422.050000      in sec:     190800.00500
+ Time of simulation  ->  20210422.051000      in sec:     191400.00500
+ Time of simulation  ->  20210422.052000      in sec:     192000.00500
+ Time of simulation  ->  20210422.053000      in sec:     192600.00500
+ Time of simulation  ->  20210422.054000      in sec:     193200.00500
+ Time of simulation  ->  20210422.055000      in sec:     193800.00500
+ Time of simulation  ->  20210422.060000      in sec:     194400.00500
+ Time of simulation  ->  20210422.061000      in sec:     195000.00500
+ Time of simulation  ->  20210422.062000      in sec:     195600.00500
+ Time of simulation  ->  20210422.063000      in sec:     196200.00500
+ Time of simulation  ->  20210422.064000      in sec:     196800.00500
+ Time of simulation  ->  20210422.065000      in sec:     197400.00500
+ Time of simulation  ->  20210422.070000      in sec:     198000.00500
+ Time of simulation  ->  20210422.071000      in sec:     198600.00500
+ Time of simulation  ->  20210422.072000      in sec:     199200.00500
+ Time of simulation  ->  20210422.073000      in sec:     199800.00500
+ Time of simulation  ->  20210422.074000      in sec:     200400.00500
+ Time of simulation  ->  20210422.075000      in sec:     201000.00500
+ Time of simulation  ->  20210422.080000      in sec:     201600.00500
+ Time of simulation  ->  20210422.081000      in sec:     202200.00500
+ Time of simulation  ->  20210422.082000      in sec:     202800.00500
+ Time of simulation  ->  20210422.083000      in sec:     203400.00500
+ Time of simulation  ->  20210422.084000      in sec:     204000.00500
+ Time of simulation  ->  20210422.085000      in sec:     204600.00500
+ Time of simulation  ->  20210422.090000      in sec:     205200.00500
+ Time of simulation  ->  20210422.091000      in sec:     205800.00500
+ Time of simulation  ->  20210422.092000      in sec:     206400.00500
+ Time of simulation  ->  20210422.093000      in sec:     207000.00500
+ Time of simulation  ->  20210422.094000      in sec:     207600.00500
+ Time of simulation  ->  20210422.095000      in sec:     208200.00500
+ Time of simulation  ->  20210422.100000      in sec:     208800.00500
+ Time of simulation  ->  20210422.101000      in sec:     209400.00500
+ Time of simulation  ->  20210422.102000      in sec:     210000.00500
+ Time of simulation  ->  20210422.103000      in sec:     210600.00500
+ Time of simulation  ->  20210422.104000      in sec:     211200.00500
+ Time of simulation  ->  20210422.105000      in sec:     211800.00500
+ Time of simulation  ->  20210422.110000      in sec:     212400.00500
+ Time of simulation  ->  20210422.111000      in sec:     213000.00500
+ Time of simulation  ->  20210422.112000      in sec:     213600.00500
+ Time of simulation  ->  20210422.113000      in sec:     214200.00500
+ Time of simulation  ->  20210422.114000      in sec:     214800.00500
+ Time of simulation  ->  20210422.115000      in sec:     215400.00500
+ Time of simulation  ->  20210422.120000      in sec:     216000.00500
+ Time of simulation  ->  20210422.121000      in sec:     216600.00500
+ Time of simulation  ->  20210422.122000      in sec:     217200.00500
+ Time of simulation  ->  20210422.123000      in sec:     217800.00500
+ Time of simulation  ->  20210422.124000      in sec:     218400.00500
+ Time of simulation  ->  20210422.125000      in sec:     219000.00500
+ Time of simulation  ->  20210422.130000      in sec:     219600.00500
+ Time of simulation  ->  20210422.131000      in sec:     220200.00500
+ Time of simulation  ->  20210422.132000      in sec:     220800.00500
+ Time of simulation  ->  20210422.133000      in sec:     221400.00500
+ Time of simulation  ->  20210422.134000      in sec:     222000.00500
+ Time of simulation  ->  20210422.135000      in sec:     222600.00500
+ Time of simulation  ->  20210422.140000      in sec:     223200.00500
+ Time of simulation  ->  20210422.141000      in sec:     223800.00500
+ Time of simulation  ->  20210422.142000      in sec:     224400.00500
+ Time of simulation  ->  20210422.143000      in sec:     225000.00500
+ Time of simulation  ->  20210422.144000      in sec:     225600.00500
+ Time of simulation  ->  20210422.145000      in sec:     226200.00500
+ Time of simulation  ->  20210422.150000      in sec:     226800.00500
+ Time of simulation  ->  20210422.151000      in sec:     227400.00500
+ Time of simulation  ->  20210422.152000      in sec:     228000.00500
+ Time of simulation  ->  20210422.153000      in sec:     228600.00500
+ Time of simulation  ->  20210422.154000      in sec:     229200.00500
+ Time of simulation  ->  20210422.155000      in sec:     229800.00500
+ Time of simulation  ->  20210422.160000      in sec:     230400.00500
+ Time of simulation  ->  20210422.161000      in sec:     231000.00500
+ Time of simulation  ->  20210422.162000      in sec:     231600.00500
+ Time of simulation  ->  20210422.163000      in sec:     232200.00500
+ Time of simulation  ->  20210422.164000      in sec:     232800.00500
+ Time of simulation  ->  20210422.165000      in sec:     233400.00500
+ Time of simulation  ->  20210422.170000      in sec:     234000.00500
+ Time of simulation  ->  20210422.171000      in sec:     234600.00500
+ Time of simulation  ->  20210422.172000      in sec:     235200.00500
+ Time of simulation  ->  20210422.173000      in sec:     235800.00500
+ Time of simulation  ->  20210422.174000      in sec:     236400.00500
+ Time of simulation  ->  20210422.175000      in sec:     237000.00500
+ Time of simulation  ->  20210422.180000      in sec:     237600.00500
+ Time of simulation  ->  20210422.181000      in sec:     238200.00500
+ Time of simulation  ->  20210422.182000      in sec:     238800.00500
+ Time of simulation  ->  20210422.183000      in sec:     239400.00500
+ Time of simulation  ->  20210422.184000      in sec:     240000.00500
+ Time of simulation  ->  20210422.185000      in sec:     240600.00500
+ Time of simulation  ->  20210422.190000      in sec:     241200.00500
+ Time of simulation  ->  20210422.191000      in sec:     241800.00500
+ Time of simulation  ->  20210422.192000      in sec:     242400.00500
+ Time of simulation  ->  20210422.193000      in sec:     243000.00500
+ Time of simulation  ->  20210422.194000      in sec:     243600.00500
+ Time of simulation  ->  20210422.195000      in sec:     244200.00500
+ Time of simulation  ->  20210422.200000      in sec:     244800.00500
+ Time of simulation  ->  20210422.201000      in sec:     245400.00500
+ Time of simulation  ->  20210422.202000      in sec:     246000.00500
+ Time of simulation  ->  20210422.203000      in sec:     246600.00500
+ Time of simulation  ->  20210422.204000      in sec:     247200.00500
+ Time of simulation  ->  20210422.205000      in sec:     247800.00500
+ Time of simulation  ->  20210422.210000      in sec:     248400.00500
+ Time of simulation  ->  20210422.211000      in sec:     249000.00500
+ Time of simulation  ->  20210422.212000      in sec:     249600.00500
+ Time of simulation  ->  20210422.213000      in sec:     250200.00500
+ Time of simulation  ->  20210422.214000      in sec:     250800.00500
+ Time of simulation  ->  20210422.215000      in sec:     251400.00500
+ Time of simulation  ->  20210422.220000      in sec:     252000.00500
+ Time of simulation  ->  20210422.221000      in sec:     252600.00500
+ Time of simulation  ->  20210422.222000      in sec:     253200.00500
+ Time of simulation  ->  20210422.223000      in sec:     253800.00500
+ Time of simulation  ->  20210422.224000      in sec:     254400.00500
+ Time of simulation  ->  20210422.225000      in sec:     255000.00500
+ Time of simulation  ->  20210422.230000      in sec:     255600.00500
+ Time of simulation  ->  20210422.231000      in sec:     256200.00500
+ Time of simulation  ->  20210422.232000      in sec:     256800.00500
+ Time of simulation  ->  20210422.233000      in sec:     257400.00500
+ Time of simulation  ->  20210422.234000      in sec:     258000.00500
+ Time of simulation  ->  20210422.235000      in sec:     258600.00500
+ Time of simulation  ->  20210423.000000      in sec:     259200.00500
+ Time of simulation  ->  20210423.001000      in sec:     259800.00500
+ Time of simulation  ->  20210423.002000      in sec:     260400.00500
+ Time of simulation  ->  20210423.003000      in sec:     261000.00500
+ Time of simulation  ->  20210423.004000      in sec:     261600.00500
+ Time of simulation  ->  20210423.005000      in sec:     262200.00500
+ Time of simulation  ->  20210423.010000      in sec:     262800.00500
+ Time of simulation  ->  20210423.011000      in sec:     263400.00500
+ Time of simulation  ->  20210423.012000      in sec:     264000.00500
+ Time of simulation  ->  20210423.013000      in sec:     264600.00500
+ Time of simulation  ->  20210423.014000      in sec:     265200.00500
+ Time of simulation  ->  20210423.015000      in sec:     265800.00500
+ Time of simulation  ->  20210423.020000      in sec:     266400.00500
+ Time of simulation  ->  20210423.021000      in sec:     267000.00500
+ Time of simulation  ->  20210423.022000      in sec:     267600.00500
+ Time of simulation  ->  20210423.023000      in sec:     268200.00500
+ Time of simulation  ->  20210423.024000      in sec:     268800.00500
+ Time of simulation  ->  20210423.025000      in sec:     269400.00500
+ Time of simulation  ->  20210423.030000      in sec:     270000.00500
+ Time of simulation  ->  20210423.031000      in sec:     270600.00500
+ Time of simulation  ->  20210423.032000      in sec:     271200.00500
+ Time of simulation  ->  20210423.033000      in sec:     271800.00500
+ Time of simulation  ->  20210423.034000      in sec:     272400.00500
+ Time of simulation  ->  20210423.035000      in sec:     273000.00500
+ Time of simulation  ->  20210423.040000      in sec:     273600.00500
+ Time of simulation  ->  20210423.041000      in sec:     274200.00500
+ Time of simulation  ->  20210423.042000      in sec:     274800.00500
+ Time of simulation  ->  20210423.043000      in sec:     275400.00500
+ Time of simulation  ->  20210423.044000      in sec:     276000.00500
+ Time of simulation  ->  20210423.045000      in sec:     276600.00500
+ Time of simulation  ->  20210423.050000      in sec:     277200.00500
+ Time of simulation  ->  20210423.051000      in sec:     277800.00500
+ Time of simulation  ->  20210423.052000      in sec:     278400.00500
+ Time of simulation  ->  20210423.053000      in sec:     279000.00500
+ Time of simulation  ->  20210423.054000      in sec:     279600.00500
+ Time of simulation  ->  20210423.055000      in sec:     280200.00500
+ Time of simulation  ->  20210423.060000      in sec:     280800.00500
+ Time of simulation  ->  20210423.061000      in sec:     281400.00500
+ Time of simulation  ->  20210423.062000      in sec:     282000.00500
+ Time of simulation  ->  20210423.063000      in sec:     282600.00500
+ Time of simulation  ->  20210423.064000      in sec:     283200.00500
+ Time of simulation  ->  20210423.065000      in sec:     283800.00500
+ Time of simulation  ->  20210423.070000      in sec:     284400.00500
+ Time of simulation  ->  20210423.071000      in sec:     285000.00500
+ Time of simulation  ->  20210423.072000      in sec:     285600.00500
+ Time of simulation  ->  20210423.073000      in sec:     286200.00500
+ Time of simulation  ->  20210423.074000      in sec:     286800.00500
+ Time of simulation  ->  20210423.075000      in sec:     287400.00500
+ Time of simulation  ->  20210423.080000      in sec:     288000.00500
+ Time of simulation  ->  20210423.081000      in sec:     288600.00500
+ Time of simulation  ->  20210423.082000      in sec:     289200.00500
+ Time of simulation  ->  20210423.083000      in sec:     289800.00500
+ Time of simulation  ->  20210423.084000      in sec:     290400.00500
+ Time of simulation  ->  20210423.085000      in sec:     291000.00500
+ Time of simulation  ->  20210423.090000      in sec:     291600.00500
+ Time of simulation  ->  20210423.091000      in sec:     292200.00500
+ Time of simulation  ->  20210423.092000      in sec:     292800.00500
+ Time of simulation  ->  20210423.093000      in sec:     293400.00500
+ Time of simulation  ->  20210423.094000      in sec:     294000.00500
+ Time of simulation  ->  20210423.095000      in sec:     294600.00500
+ Time of simulation  ->  20210423.100000      in sec:     295200.00500
+ Time of simulation  ->  20210423.101000      in sec:     295800.00500
+ Time of simulation  ->  20210423.102000      in sec:     296400.00500
+ Time of simulation  ->  20210423.103000      in sec:     297000.00500
+ Time of simulation  ->  20210423.104000      in sec:     297600.00500
+ Time of simulation  ->  20210423.105000      in sec:     298200.00500
+ Time of simulation  ->  20210423.110000      in sec:     298800.00500
+ Time of simulation  ->  20210423.111000      in sec:     299400.00500
+ Time of simulation  ->  20210423.112000      in sec:     300000.00500
+ Time of simulation  ->  20210423.113000      in sec:     300600.00500
+ Time of simulation  ->  20210423.114000      in sec:     301200.00500
+ Time of simulation  ->  20210423.115000      in sec:     301800.00500
+ Time of simulation  ->  20210423.120000      in sec:     302400.00500
+ Time of simulation  ->  20210423.121000      in sec:     303000.00500
+ Time of simulation  ->  20210423.122000      in sec:     303600.00500
+ Time of simulation  ->  20210423.123000      in sec:     304200.00500
+ Time of simulation  ->  20210423.124000      in sec:     304800.00500
+ Time of simulation  ->  20210423.125000      in sec:     305400.00500
+ Time of simulation  ->  20210423.130000      in sec:     306000.00500
+ Time of simulation  ->  20210423.131000      in sec:     306600.00500
+ Time of simulation  ->  20210423.132000      in sec:     307200.00500
+ Time of simulation  ->  20210423.133000      in sec:     307800.00500
+ Time of simulation  ->  20210423.134000      in sec:     308400.00500
+ Time of simulation  ->  20210423.135000      in sec:     309000.00500
+ Time of simulation  ->  20210423.140000      in sec:     309600.00500
+ Time of simulation  ->  20210423.141000      in sec:     310200.00500
+ Time of simulation  ->  20210423.142000      in sec:     310800.00500
+ Time of simulation  ->  20210423.143000      in sec:     311400.00500
+ Time of simulation  ->  20210423.144000      in sec:     312000.00500
+ Time of simulation  ->  20210423.145000      in sec:     312600.00500
+ Time of simulation  ->  20210423.150000      in sec:     313200.00500
+ Time of simulation  ->  20210423.151000      in sec:     313800.00500
+ Time of simulation  ->  20210423.152000      in sec:     314400.00500
+ Time of simulation  ->  20210423.153000      in sec:     315000.00500
+ Time of simulation  ->  20210423.154000      in sec:     315600.00500
+ Time of simulation  ->  20210423.155000      in sec:     316200.00500
+ Time of simulation  ->  20210423.160000      in sec:     316800.00500
+ Time of simulation  ->  20210423.161000      in sec:     317400.00500
+ Time of simulation  ->  20210423.162000      in sec:     318000.00500
+ Time of simulation  ->  20210423.163000      in sec:     318600.00500
+ Time of simulation  ->  20210423.164000      in sec:     319200.00500
+ Time of simulation  ->  20210423.165000      in sec:     319800.00500
+ Time of simulation  ->  20210423.170000      in sec:     320400.00500
+ Time of simulation  ->  20210423.171000      in sec:     321000.00500
+ Time of simulation  ->  20210423.172000      in sec:     321600.00500
+ Time of simulation  ->  20210423.173000      in sec:     322200.00500
+ Time of simulation  ->  20210423.174000      in sec:     322800.00500
+ Time of simulation  ->  20210423.175000      in sec:     323400.00500
+ Time of simulation  ->  20210423.180000      in sec:     324000.00500
+ Time of simulation  ->  20210423.181000      in sec:     324600.00500
+ Time of simulation  ->  20210423.182000      in sec:     325200.00500
+ Time of simulation  ->  20210423.183000      in sec:     325800.00500
+ Time of simulation  ->  20210423.184000      in sec:     326400.00500
+ Time of simulation  ->  20210423.185000      in sec:     327000.00500
+ Time of simulation  ->  20210423.190000      in sec:     327600.00500
+ Time of simulation  ->  20210423.191000      in sec:     328200.00500
+ Time of simulation  ->  20210423.192000      in sec:     328800.00500
+ Time of simulation  ->  20210423.193000      in sec:     329400.00500
+ Time of simulation  ->  20210423.194000      in sec:     330000.00500
+ Time of simulation  ->  20210423.195000      in sec:     330600.00500
+ Time of simulation  ->  20210423.200000      in sec:     331200.00500
+ Time of simulation  ->  20210423.201000      in sec:     331800.00500
+ Time of simulation  ->  20210423.202000      in sec:     332400.00500
+ Time of simulation  ->  20210423.203000      in sec:     333000.00500
+ Time of simulation  ->  20210423.204000      in sec:     333600.00500
+ Time of simulation  ->  20210423.205000      in sec:     334200.00500
+ Time of simulation  ->  20210423.210000      in sec:     334800.00500
+ Time of simulation  ->  20210423.211000      in sec:     335400.00500
+ Time of simulation  ->  20210423.212000      in sec:     336000.00500
+ Time of simulation  ->  20210423.213000      in sec:     336600.00500
+ Time of simulation  ->  20210423.214000      in sec:     337200.00500
+ Time of simulation  ->  20210423.215000      in sec:     337800.00500
+ Time of simulation  ->  20210423.220000      in sec:     338400.00500
+ Time of simulation  ->  20210423.221000      in sec:     339000.00500
+ Time of simulation  ->  20210423.222000      in sec:     339600.00500
+ Time of simulation  ->  20210423.223000      in sec:     340200.00500
+ Time of simulation  ->  20210423.224000      in sec:     340800.00500
+ Time of simulation  ->  20210423.225000      in sec:     341400.00500
+ Time of simulation  ->  20210423.230000      in sec:     342000.00500
+ Time of simulation  ->  20210423.231000      in sec:     342600.00500
+ Time of simulation  ->  20210423.232000      in sec:     343200.00500
+ Time of simulation  ->  20210423.233000      in sec:     343800.00500
+ Time of simulation  ->  20210423.234000      in sec:     344400.00500
+ Time of simulation  ->  20210423.235000      in sec:     345000.00500
+ Time of simulation  ->  20210424.000000      in sec:     345600.00500
+ Time of simulation  ->  20210424.001000      in sec:     346200.00500
+ Time of simulation  ->  20210424.002000      in sec:     346800.00500
+ Time of simulation  ->  20210424.003000      in sec:     347400.00500
+ Time of simulation  ->  20210424.004000      in sec:     348000.00500
+ Time of simulation  ->  20210424.005000      in sec:     348600.00500
+ Time of simulation  ->  20210424.010000      in sec:     349200.00500
+ Time of simulation  ->  20210424.011000      in sec:     349800.00500
+ Time of simulation  ->  20210424.012000      in sec:     350400.00500
+ Time of simulation  ->  20210424.013000      in sec:     351000.00500
+ Time of simulation  ->  20210424.014000      in sec:     351600.00500
+ Time of simulation  ->  20210424.015000      in sec:     352200.00500
+ Time of simulation  ->  20210424.020000      in sec:     352800.00500
+ Time of simulation  ->  20210424.021000      in sec:     353400.00500
+ Time of simulation  ->  20210424.022000      in sec:     354000.00500
+ Time of simulation  ->  20210424.023000      in sec:     354600.00500
+ Time of simulation  ->  20210424.024000      in sec:     355200.00500
+ Time of simulation  ->  20210424.025000      in sec:     355800.00500
+ Time of simulation  ->  20210424.030000      in sec:     356400.00500
+ Time of simulation  ->  20210424.031000      in sec:     357000.00500
+ Time of simulation  ->  20210424.032000      in sec:     357600.00500
+ Time of simulation  ->  20210424.033000      in sec:     358200.00500
+ Time of simulation  ->  20210424.034000      in sec:     358800.00500
+ Time of simulation  ->  20210424.035000      in sec:     359400.00500
+ Time of simulation  ->  20210424.040000      in sec:     360000.00500
+ Time of simulation  ->  20210424.041000      in sec:     360600.00500
+ Time of simulation  ->  20210424.042000      in sec:     361200.00500
+ Time of simulation  ->  20210424.043000      in sec:     361800.00500
+ Time of simulation  ->  20210424.044000      in sec:     362400.00500
+ Time of simulation  ->  20210424.045000      in sec:     363000.00500
+ Time of simulation  ->  20210424.050000      in sec:     363600.00500
+ Time of simulation  ->  20210424.051000      in sec:     364200.00500
+ Time of simulation  ->  20210424.052000      in sec:     364800.00500
+ Time of simulation  ->  20210424.053000      in sec:     365400.00500
+ Time of simulation  ->  20210424.054000      in sec:     366000.00500
+ Time of simulation  ->  20210424.055000      in sec:     366600.00500
+ Time of simulation  ->  20210424.060000      in sec:     367200.00500
+ Time of simulation  ->  20210424.061000      in sec:     367800.00500
+ Time of simulation  ->  20210424.062000      in sec:     368400.00500
+ Time of simulation  ->  20210424.063000      in sec:     369000.00500
+ Time of simulation  ->  20210424.064000      in sec:     369600.00500
+ Time of simulation  ->  20210424.065000      in sec:     370200.00500
+ Time of simulation  ->  20210424.070000      in sec:     370800.00500
+ Time of simulation  ->  20210424.071000      in sec:     371400.00500
+ Time of simulation  ->  20210424.072000      in sec:     372000.00500
+ Time of simulation  ->  20210424.073000      in sec:     372600.00500
+ Time of simulation  ->  20210424.074000      in sec:     373200.00500
+ Time of simulation  ->  20210424.075000      in sec:     373800.00500
+ Time of simulation  ->  20210424.080000      in sec:     374400.00500
+ Time of simulation  ->  20210424.081000      in sec:     375000.00500
+ Time of simulation  ->  20210424.082000      in sec:     375600.00500
+ Time of simulation  ->  20210424.083000      in sec:     376200.00500
+ Time of simulation  ->  20210424.084000      in sec:     376800.00500
+ Time of simulation  ->  20210424.085000      in sec:     377400.00500
+ Time of simulation  ->  20210424.090000      in sec:     378000.00500
+ Time of simulation  ->  20210424.091000      in sec:     378600.00500
+ Time of simulation  ->  20210424.092000      in sec:     379200.00500
+ Time of simulation  ->  20210424.093000      in sec:     379800.00500
+ Time of simulation  ->  20210424.094000      in sec:     380400.00500
+ Time of simulation  ->  20210424.095000      in sec:     381000.00500
+ Time of simulation  ->  20210424.100000      in sec:     381600.00500
+ Time of simulation  ->  20210424.101000      in sec:     382200.00500
+ Time of simulation  ->  20210424.102000      in sec:     382800.00500
+ Time of simulation  ->  20210424.103000      in sec:     383400.00500
+ Time of simulation  ->  20210424.104000      in sec:     384000.00500
+ Time of simulation  ->  20210424.105000      in sec:     384600.00500
+ Time of simulation  ->  20210424.110000      in sec:     385200.00500
+ Time of simulation  ->  20210424.111000      in sec:     385800.00500
+ Time of simulation  ->  20210424.112000      in sec:     386400.00500
+ Time of simulation  ->  20210424.113000      in sec:     387000.00500
+ Time of simulation  ->  20210424.114000      in sec:     387600.00500
+ Time of simulation  ->  20210424.115000      in sec:     388200.00500
+ Time of simulation  ->  20210424.120000      in sec:     388800.00500
+ Time of simulation  ->  20210424.121000      in sec:     389400.00500
+ Time of simulation  ->  20210424.122000      in sec:     390000.00500
+ Time of simulation  ->  20210424.123000      in sec:     390600.00500
+ Time of simulation  ->  20210424.124000      in sec:     391200.00500
+ Time of simulation  ->  20210424.125000      in sec:     391800.00500
+ Time of simulation  ->  20210424.130000      in sec:     392400.00500
+ Time of simulation  ->  20210424.131000      in sec:     393000.00500
+ Time of simulation  ->  20210424.132000      in sec:     393600.00500
+ Time of simulation  ->  20210424.133000      in sec:     394200.00500
+ Time of simulation  ->  20210424.134000      in sec:     394800.00500
+ Time of simulation  ->  20210424.135000      in sec:     395400.00500
+ Time of simulation  ->  20210424.140000      in sec:     396000.00500
+ Time of simulation  ->  20210424.141000      in sec:     396600.00500
+ Time of simulation  ->  20210424.142000      in sec:     397200.00500
+ Time of simulation  ->  20210424.143000      in sec:     397800.00500
+ Time of simulation  ->  20210424.144000      in sec:     398400.00500
+ Time of simulation  ->  20210424.145000      in sec:     399000.00500
+ Time of simulation  ->  20210424.150000      in sec:     399600.00500
+ Time of simulation  ->  20210424.151000      in sec:     400200.00500
+ Time of simulation  ->  20210424.152000      in sec:     400800.00500
+ Time of simulation  ->  20210424.153000      in sec:     401400.00500
+ Time of simulation  ->  20210424.154000      in sec:     402000.00500
+ Time of simulation  ->  20210424.155000      in sec:     402600.00500
+ Time of simulation  ->  20210424.160000      in sec:     403200.00500
+ Time of simulation  ->  20210424.161000      in sec:     403800.00500
+ Time of simulation  ->  20210424.162000      in sec:     404400.00500
+ Time of simulation  ->  20210424.163000      in sec:     405000.00500
+ Time of simulation  ->  20210424.164000      in sec:     405600.00500
+ Time of simulation  ->  20210424.165000      in sec:     406200.00500
+ Time of simulation  ->  20210424.170000      in sec:     406800.00500
+ Time of simulation  ->  20210424.171000      in sec:     407400.00500
+ Time of simulation  ->  20210424.172000      in sec:     408000.00500
+ Time of simulation  ->  20210424.173000      in sec:     408600.00500
+ Time of simulation  ->  20210424.174000      in sec:     409200.00500
+ Time of simulation  ->  20210424.175000      in sec:     409800.00500
+ Time of simulation  ->  20210424.180000      in sec:     410400.00500
+ Time of simulation  ->  20210424.181000      in sec:     411000.00500
+ Time of simulation  ->  20210424.182000      in sec:     411600.00500
+ Time of simulation  ->  20210424.183000      in sec:     412200.00500
+ Time of simulation  ->  20210424.184000      in sec:     412800.00500
+ Time of simulation  ->  20210424.185000      in sec:     413400.00500
+ Time of simulation  ->  20210424.190000      in sec:     414000.00500
+ Time of simulation  ->  20210424.191000      in sec:     414600.00500
+ Time of simulation  ->  20210424.192000      in sec:     415200.00500
+ Time of simulation  ->  20210424.193000      in sec:     415800.00500
+ Time of simulation  ->  20210424.194000      in sec:     416400.00500
+ Time of simulation  ->  20210424.195000      in sec:     417000.00500
+ Time of simulation  ->  20210424.200000      in sec:     417600.00500
+ Time of simulation  ->  20210424.201000      in sec:     418200.00500
+ Time of simulation  ->  20210424.202000      in sec:     418800.00500
+ Time of simulation  ->  20210424.203000      in sec:     419400.00500
+ Time of simulation  ->  20210424.204000      in sec:     420000.00500
+ Time of simulation  ->  20210424.205000      in sec:     420600.00500
+ Time of simulation  ->  20210424.210000      in sec:     421200.00500
+ Time of simulation  ->  20210424.211000      in sec:     421800.00500
+ Time of simulation  ->  20210424.212000      in sec:     422400.00500
+ Time of simulation  ->  20210424.213000      in sec:     423000.00500
+ Time of simulation  ->  20210424.214000      in sec:     423600.00500
+ Time of simulation  ->  20210424.215000      in sec:     424200.00500
+ Time of simulation  ->  20210424.220000      in sec:     424800.00500
+ Time of simulation  ->  20210424.221000      in sec:     425400.00500
+ Time of simulation  ->  20210424.222000      in sec:     426000.00500
+ Time of simulation  ->  20210424.223000      in sec:     426600.00500
+ Time of simulation  ->  20210424.224000      in sec:     427200.00500
+ Time of simulation  ->  20210424.225000      in sec:     427800.00500
+ Time of simulation  ->  20210424.230000      in sec:     428400.00500
+ Time of simulation  ->  20210424.231000      in sec:     429000.00500
+ Time of simulation  ->  20210424.232000      in sec:     429600.00500
+ Time of simulation  ->  20210424.233000      in sec:     430200.00500
+ Time of simulation  ->  20210424.234000      in sec:     430800.00500
+ Time of simulation  ->  20210424.235000      in sec:     431400.00500
+ Time of simulation  ->  20210425.000000      in sec:     432000.00500
+    
+ !
+    
+ !                              | -> Sec  |
+    
+ !   COMPute   [tbegc] [deltc] <     MIn   > [tendc]
+    
+ !                              |    HR   |
+    
+ !                              |    DAy  |
+    
+ !
+    
+ STOP
