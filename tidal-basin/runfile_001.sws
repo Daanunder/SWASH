@@ -261,8 +261,8 @@ TIMEI METH IMPLICIT
 !
 ! ## Specify output
 !POINTS 'buoys' 10000. 0. 
-FRAME 'buoys' 0. 0. 0. 10000. 0. 5 0
-TABLE 'buoys' HEAD 'output_buoy_001.tbl' TSEC WATL OUT  20210420.000000  5 MIN
+FRAME 'buoys' 0. 0. 0. 10000 0. 5 0
+TABLE 'buoys' HEAD 'output_buoy_001.tbl' TSEC  WATLEV  VMAG  OUT  20210420.000000  5 MIN
 !
 !   FRAME   'sname'  [xpfr] [ypfr] [alpfr] [xlenfr] [ylenfr] [mxfr] [myfr]
 !

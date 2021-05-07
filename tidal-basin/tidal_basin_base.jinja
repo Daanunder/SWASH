@@ -261,8 +261,8 @@ TIMEI METH IMPLICIT
 !
 ! ## Specify output
 !POINTS 'buoys' 10000. 0. 
-FRAME 'buoys' 0. 0. 0. 10000. 0. 5 0
-TABLE 'buoys' HEAD '{{ 'output_buoy_%s.tbl' % sim.sim_id }}' TSEC WATL OUT {% if sim.output_start == 0 %} {{ sim.starttime.strftime('%Y%m%d.%H%M%S') }} {% else %} {{ sim.output_start.strftime('%Y%m%d.%H%M%S') }} {% endif %} {{ sim.output_freq }} {{ sim.output_freq_unit }}
+FRAME 'buoys' 0. 0. 0. {{ sim.basinlenght }} 0. {{ sim.output_nodes }} 0
+TABLE 'buoys' HEAD '{{ 'output_buoy_%s.tbl' % sim.sim_id }}' TSEC {% for p in sim.output_params %} {{ p }} {% endfor %} OUT {% if sim.output_start == 0 %} {{ sim.starttime.strftime('%Y%m%d.%H%M%S') }} {% else %} {{ sim.output_start.strftime('%Y%m%d.%H%M%S') }} {% endif %} {{ sim.output_freq }} {{ sim.output_freq_unit }}
 !
 !   FRAME   'sname'  [xpfr] [ypfr] [alpfr] [xlenfr] [ylenfr] [mxfr] [myfr]
 !
