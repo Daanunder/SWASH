@@ -6,8 +6,8 @@ import seaborn as sns
 
 
 def get_data(sim):
-    fname = f"output_buoy_{sim['sim_id']}.tbl"
-    df = pd.read_csv(fname, sep='\s+', skiprows=7, index_col=0, names=sim['output_params'])
+    fpath_output_data = rundir / f"output_buoy_{sim['sim_id']}.tbl"
+    df = pd.read_csv(fpath_output_data, sep='\s+', skiprows=7, index_col=0, names=sim['output_params'])
     
     # There are multiple ways of dealing with the different data columns; 1. split into different datasets (series) 2. Single dataset with multi-index
     # Split series 
@@ -22,7 +22,7 @@ def get_data(sim):
     # Create multi index [time, space]
     time_index = df.index
     n = sim['output_nodes']+1
-    space_index = ['x%8d' % round(x) for x in np.linspace(0, sim['basinlenght'], n)]*int(time_index.size/n)
+    space_index = ['x%6d' % round(x) for x in np.linspace(0, sim['basinlenght'], n)]*int(time_index.size/n)
     index_arrays = [time_index, space_index]
     index_tuples = list(zip(*index_arrays))
     multi_index = pd.MultiIndex.from_tuples(index_tuples, names=['Time [s]', 'Space [m]'])

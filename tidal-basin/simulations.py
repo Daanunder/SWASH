@@ -1,13 +1,15 @@
 import datetime as dt
 import numpy as np
 
-class simulations(object):
+class simulation_parameters(object):
     # Tidal Basin
     tidbas001 = dict(
             # general
             name = 'Tidal basin',
             sim_id = '001',
             description = 'Modelling free and force behaviour of a tidal basin',
+            fname_jinja_base = 'tidal_basin_base.jinja',
+            # Grid spec
             basinlenght = 10000,
             xm = 100,
             # boundary conditions
@@ -16,7 +18,8 @@ class simulations(object):
             tidal_phase = 90,
             # bottom
             # Possibly construct .bot file from bottom definition
-            botfname = 'flat.bot',
+            bottom_list = [10, 10],
+            fname_bottom = 'flat.bot',
             swashfname = 'tidal-basin.sws',
             # computation
             starttime = dt.datetime(2021, 4, 20),
@@ -31,6 +34,37 @@ class simulations(object):
             output_nodes = 5
             )
 
+    tidbas002 = tidbas001.copy()
+    tidbas002['sim_id'] = '002'
+    tidbas002['depth'] = 50000
+
+    tidbas002 = tidbas001.copy()
+    tidbas002['sim_id'] = '002'
+    tidbas002['basinlenght'] = 50000
+
+    tidbas002 = tidbas001.copy()
+    tidbas002['sim_id'] = '002'
+    tidbas002['basinlenght'] = 50000
+
+    tidbas002 = tidbas001.copy()
+    tidbas002['sim_id'] = '002'
+    tidbas002['basinlenght'] = 50000
+
+    tidbas002 = tidbas001.copy()
+    tidbas002['sim_id'] = '002'
+    tidbas002['basinlenght'] = 50000
+
+    tidbas002 = tidbas001.copy()
+    tidbas002['sim_id'] = '002'
+    tidbas002['basinlenght'] = 50000
+
+    tidbas002 = tidbas001.copy()
+    tidbas002['sim_id'] = '002'
+    tidbas002['basinlenght'] = 50000
+
+    tidbas002 = tidbas001.copy()
+    tidbas002['sim_id'] = '002'
+    tidbas002['basinlenght'] = 50000
 
     tidbas002 = tidbas001.copy()
     tidbas002['sim_id'] = '002'
