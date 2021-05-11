@@ -1,6 +1,6 @@
 1
 
-                    Execution started at 20210511.114122         
+                    Execution started at 20210511.114133         
 
 
 
@@ -12,7 +12,7 @@
 
 
     
- PROJECT  'Tidal basin' '001'
+ PROJECT  'Tidal basin' '005'
     
  !   '"
     
@@ -294,6 +294,10 @@
     
  
     
+ FRICTION COLEBROOK 0.01
+    
+ 
+    
  !
     
  !              |    LINear [k]
@@ -550,7 +554,7 @@
     
  FRAME 'buoys' 0. 0. 0. 10000 0. 3 0
     
- TABLE 'buoys' HEAD 'output_buoy_001.tbl' TSEC  WATLEV  VMAG  OUT  20210420.000000  5 MIN
+ TABLE 'buoys' HEAD 'output_buoy_005.tbl' TSEC  WATLEV  VMAG  OUT  20210420.000000  5 MIN
     
  !
     
@@ -686,7 +690,7 @@
                       : RHOA     0.1205E+01 DYNVIS  0.1000E-02
  Wind input           : WSPEED   0.0000E+00 DIR     0.0000E+00
  Wind stress is off
- Bottom friction is off
+ Colebrook-White form : HEIGHT   0.1000E-01
  Vegetation is off
  No wave breaking control
  Baroclinic forcing is off
@@ -694,7 +698,7 @@
  Horizontal viscosity is off
  Vertical viscosity is off
  Porosity is off
- Semi-implicit method : THETAC   0.5100E+00 THETAS  0.5100E+00
+ Semi-implicit method : THETAC   0.5000E+00 THETAS  0.5000E+00
  Horz advection u-mom : PROPSC            3 KAPPA  -0.1000E+01
                       : M        0.0000E+00 PHI     0.0000E+00
  Correction water dep : PROPSC            6 KAPPA   0.0000E+00
