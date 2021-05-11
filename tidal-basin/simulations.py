@@ -45,7 +45,7 @@ class simulation_parameters(object):
             output_start = 0, # 0 -> starttime else specify datetime or timedelta 
             output_freq = 5,
             output_freq_unit = 'MIN', #SEC MIN HR DAY
-            output_nodes = 3
+            output_nodes = 2
             )
 
     tidbas001 = tidbas000.copy()

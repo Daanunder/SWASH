@@ -26,7 +26,8 @@ class swash_sim(object):
 
         self.image_folder = self.rundir.absolute().parent / 'images'
         self.image_folder.mkdir(parents=True, exist_ok=True)
-        self.fpath_figure_jpg = self.image_folder / f"figure_{self.sim_id}.jpg"
+        self.fpath_abs_figure_jpg = self.image_folder / f"ass1_abs_{self.sim_id}.jpg"
+        self.fpath_diff_figure_jpg = self.image_folder / f"ass1_diff_{self.sim_id}.jpg"
 
         self.fpath_print_file = self.rundir / f'runfile_{self.sim_id}.prt'
 
@@ -109,16 +110,28 @@ class swash_sim(object):
     def plot_multi_index(self):
         df = self._get_data()
         n = self.output_nodes+1
-        axes = df.unstack(level=1).plot(sort_columns=True, subplots=True, grid=True, title=f"Simulation: {self.sim_id}; Velocity and waterlevel over time for {n} locations", legend=True)
-        for ax in axes:
-            ax.legend(loc='lower right')
-        plt.savefig(self.fpath_figure_jpg)
+        axes = df.unstack(level=1).plot(sort_columns=True, subplots=True, grid=True, title=f"Simulation: {self.sim_id}; Velocity and waterlevel over time for {n} locations", legend=True, figsize=(12,7.5), sharex=True)
+        
+        for axis in axes:
+            axis.legend(loc='lower right')
+        plt.savefig(self.fpath_abs_figure_jpg)
         #plt.suptitle(f'Simulation: {self.sim_id}')
         #df.plot(kind='line', subplots=True, grid=True, title="Sample Data (Unit)",
                 #layout=(4, 3), sharex=True, sharey=False, legend=True,    
                 #style=['r', 'r', 'r', 'g', 'g', 'g', 'b', 'b', 'b', 'r', 'r', 'r'],
                 #xticks=np.arange(0, len(df), 16))
 
+        fig,ax = plt.subplots(2,1, figsize=(12,7.5))
+        fig.suptitle('Differences in velocity and waterlevel compared to the boundary conditions')
+
+        p_wlev_diff = df.unstack(level=1)['WATLEV'].diff(axis=1).iloc[:,1:].plot(ax=ax[0], title='Waterlevel [m]', legend=True)
+        p_wlev_diff.set_ylabel('Waterlevel [m]')
+        p_vmag_diff = df.unstack(level=1)['VMAG'].diff(axis=1).iloc[:,1:].plot(ax=ax[1], title='Velocity [m/s]', legend=True)
+        p_vmag_diff.set_ylabel('Velocity [m/s]')
+
+        for axis in [p_wlev_diff, p_vmag_diff]:
+            axis.legend(loc='upper right')
+        plt.savefig(self.fpath_diff_figure_jpg)
     
     def full_run(self):
         self.prepare_run()
